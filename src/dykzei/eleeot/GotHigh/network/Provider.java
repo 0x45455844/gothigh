@@ -4,55 +4,43 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.List;
+
+import android.text.Html;
 
 import dykzei.eleeot.GotHigh.Application;
+import dykzei.eleeot.GotHigh.DB;
 import dykzei.eleeot.GotHigh.Logger;
-import dykzei.eleeot.GotHigh.chan.ChThread;
+import dykzei.eleeot.GotHigh.chan.ChMessage;
 
 public class Provider {
-
-	
 	
 	public static void getBoardThreads(final String board, final IThreadReceiver receiver){
-		(new Thread(new Runnable() {
-			
+		(new Thread(new Runnable() {			
 			@Override
 			public void run() {
-				List<ChThread> list = new ArrayList<ChThread>();
 				IAIBParser parser = Application.getParser();
 				String url = parser.getBoardUrl(board);
 				String content;
 				try{					
 					content = get(url);
 					if(content == null || content.length() == 0)
-						throw new Exception("not found");
+						throw new Exception(url + ": unavailable.");
 				}catch(Exception e){
 					Logger.w("" + e);
 					return;
-				}
-				
-//				String[] rawAibThreads = parser.getBoardThreads(content);
-//				
-//				for(String rawAibThread : rawAibThreads){
-//					Thread rThread = AIBThread.synthAIBThreadTree(Settings.currentBoard, rawAibThread, null);
-//					if(rThread != null){
-//						getHoster().addAibThread(rThread);
-//						if(Settings.showReplies){
-//							RemoteThread prevRThread = rThread;
-//							while(prevRThread.getNext() != null){
-//								getHoster().addAibThread(prevRThread.getNext());
-//								prevRThread = prevRThread.getNext();
-//							}
-//						}
-//					}
-//				}
-				
+				}				
+				String[] raws = parser.getBoardThreads(content);				
+								
+				for(String raw : raws){
+					String rawHeadMessage = parser.getBoardThreadHeadMessage(raw);
+					ChMessage message = new ChMessage(parser.getId(rawHeadMessage));
+					message.setText(Html.fromHtml(parser.getText(rawHeadMessage)).toString());
+					message.setImage(parser.getImage(rawHeadMessage));
+					DB.addBoardMessage(message);
+				}				
 				receiver.onThreadsFetchComplete();				
 			}
-		})).start();
-		
+		})).start();		
 	}
 	
 	private static String get(String sUrl) {

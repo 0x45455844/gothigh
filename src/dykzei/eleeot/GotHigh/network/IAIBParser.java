@@ -6,6 +6,13 @@ public interface IAIBParser {
 	String getBoardUrl(String board);
 	String[] getAibBoards();
 	String[] getAibBoardNames();
+	String getBoardCode(int index);
+	String getBoardName(int index);
 	int getAibMaxPages();
+	
 	String[] getBoardThreads(String raw);
+	String getBoardThreadHeadMessage(String raw);
+	String getId(String raw);
+	String getText(String raw);
+	String getImage(String raw);
 }

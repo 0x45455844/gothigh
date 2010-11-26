@@ -75,6 +75,22 @@ public class Parser4chan implements IAIBParser {
 	}
 	
 	@Override
+	public String getBoardCode(int index) {
+		if(index >= 0 && index < boards.length)
+			return boards[index];
+		
+		return "b";
+	}
+
+	@Override
+	public String getBoardName(int index) {
+		if(index >= 0 && index < boardNames.length)
+			return boardNames[index];
+		
+		return "Random";
+	}
+	
+	@Override
 	public int getAibMaxPages() {
 		return 15;
 	}
@@ -106,6 +122,41 @@ public class Parser4chan implements IAIBParser {
 		}
 		
 		return new String[]{};
+	}
+
+	@Override
+	public String getBoardThreadHeadMessage(String raw) {
+		pattern = Pattern.compile(".*?<table");
+		matcher = pattern.matcher(raw);
+		if(matcher.find()){
+			return matcher.group();
+		}else{
+			pattern = Pattern.compile(".*?<\\/blockquote>");
+			matcher = pattern.matcher(raw);
+			if(matcher.find()){
+				return matcher.group();
+			}
+		}
+		return "";
+	}
+	
+	@Override
+	public String getId(String raw) {
+		String id = getInner(raw, "<span id=\"norep", "\">", ".*?");
+		if(id == null || id.length() == 0){
+			id = getInner(raw, "<span id=\"nothread", "\">", ".*?");
+		}
+		return id;
+	}
+	
+	@Override
+	public String getText(String raw) {
+		return getInner(raw, "<blockquote>", "</blockquote>", ".*?");
+	}
+	
+	@Override
+	public String getImage(String raw) {
+		return getInner(raw, "<img src=", " border=0 ali", ".*?");
 	}
 
 }

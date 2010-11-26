@@ -2,53 +2,45 @@ package dykzei.eleeot.GotHigh.chan;
 
 public class ChMessage {
 
-	private String board;
-	private String id;
-	private String text;
-	private String image;
+	private String id = "";
+	private String text = "";
+	private String image = "";
 	
 	private ChMessage previous;
 	private ChMessage next;
 	
-	public ChMessage(String id, String board){
+	public ChMessage(String id){
 		this.id = id;
-		this.board = board;
 	}
 	
 	public String getId(){
 		return id;
 	}
 	
-	public void setId(String id){
+	public ChMessage setId(String id){
 		if(id != null)
 			this.id = id;
-	}
-	
-	public String getBoard(){
-		return board;
-	}
-	
-	public void setBoard(String board){
-		if(board != null)
-			this.board = board;
+		return this;
 	}
 	
 	public String getImage(){
 		return image;
 	}
 	
-	public void setImage(String image){
+	public ChMessage setImage(String image){
 		if(image != null)
 			this.image = image;
+		return this;
 	}
 	
 	public String getText(){
 		return text;
 	}
 	
-	public void setText(String text){
+	public ChMessage setText(String text){
 		if(text != null)
 			this.text = text;
+		return this;
 	}
 	
 	public ChMessage getPrevious(){

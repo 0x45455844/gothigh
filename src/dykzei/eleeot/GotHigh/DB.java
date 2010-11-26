@@ -1,11 +1,17 @@
 package dykzei.eleeot.GotHigh;
 
+import dykzei.eleeot.GotHigh.chan.ChMessage;
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class DB extends SQLiteOpenHelper{
+	
+	public static final int BOARD_COLUMN_INDEX_ID = 2;
+	public static final int BOARD_COLUMN_INDEX_TEXT = 3;
+	public static final int BOARD_COLUMN_INDEX_IMAGE = 4;
 	
 	private static final String DB_NAME = "gethigh4chan";
 	private static DB self;
@@ -17,7 +23,7 @@ public class DB extends SQLiteOpenHelper{
 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-		db.execSQL("CREATE TABLE board (_id TEXT, moment INTEGER, text TEXT, image TEXT);");		
+		db.execSQL("CREATE TABLE board (_id INTEGER primary key autoincrement, moment INTEGER, id TEXT, text TEXT, image TEXT);");		
 	}
 
 	@Override
@@ -28,11 +34,12 @@ public class DB extends SQLiteOpenHelper{
 	
 	public static Cursor getBoard(){
 		SQLiteDatabase db = getSelf().getReadableDatabase();
-		Cursor c = db.rawQuery("SELECT _id, moment, text, image FROM board ORDER BY moment DESC", null);
+		Cursor c = db.rawQuery("SELECT _id, moment, id, text, image FROM board ORDER BY moment DESC", null);
 		return c;
 	}
 	
 	public static void suicide(){
+		self.close();
 		self = null;
 	}
 	
@@ -40,6 +47,21 @@ public class DB extends SQLiteOpenHelper{
 		if(self == null)
 			self = new DB(Application.getContext());
 		return self;
+	}
+	
+	public static void clearBoard(){
+		SQLiteDatabase db = getSelf().getWritableDatabase();			    
+		db.delete("board", null, null);
+	}
+	
+	public static void addBoardMessage(ChMessage message){
+		SQLiteDatabase db = getSelf().getWritableDatabase();
+		ContentValues values = new ContentValues();		
+		values.put("moment", System.currentTimeMillis());
+		values.put("id", message.getId());
+		values.put("text", message.getText());
+		values.put("image", message.getImage());	    	
+		db.insert("board", null, values);
 	}
 
 }
