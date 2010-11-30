@@ -4,6 +4,7 @@ import java.io.File;
 
 import android.content.Context;
 import android.os.Environment;
+import android.view.WindowManager;
 import dykzei.eleeot.GotHigh.network.IAIBParser;
 import dykzei.eleeot.GotHigh.network.Parser4chan;
 
@@ -11,6 +12,7 @@ public class Application extends android.app.Application {
 
 	private static Application self;
 	private static IAIBParser parser;
+	private static int screenWidth;
 	
 	public static IAIBParser getParser(){
 		if(parser == null)
@@ -81,5 +83,10 @@ public class Application extends android.app.Application {
 		return fn;
 	}
 	
-	
+	public static int getScreenWidth(){
+		if(screenWidth == 0)
+			screenWidth = ((WindowManager)self.getSystemService(Context.WINDOW_SERVICE))
+				.getDefaultDisplay().getWidth();
+		return screenWidth;
+	}
 }

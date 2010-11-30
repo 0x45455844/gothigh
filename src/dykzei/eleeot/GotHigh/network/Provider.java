@@ -27,6 +27,7 @@ public class Provider {
 						throw new Exception(url + ": unavailable.");
 				}catch(Exception e){
 					Logger.w("" + e);
+					receiver.onThreadsFetchComplete();
 					return;
 				}				
 				String[] raws = parser.getBoardThreads(content);				
@@ -34,8 +35,41 @@ public class Provider {
 				for(String raw : raws){
 					String rawHeadMessage = parser.getBoardThreadHeadMessage(raw);
 					ChMessage message = new ChMessage(parser.getId(rawHeadMessage));
-					message.setText(Html.fromHtml(parser.getText(rawHeadMessage)).toString());
-					message.setImage(parser.getImage(rawHeadMessage));
+					message.text = Html.fromHtml(parser.getText(rawHeadMessage)).toString();
+					message.image = parser.getImage(rawHeadMessage);
+					message.date = parser.getDate(rawHeadMessage);
+					message.ommit = parser.getOmmited(rawHeadMessage, false);
+					message.ommitImg = parser.getOmmited(rawHeadMessage, true);
+					message.subject = parser.getSubject(rawHeadMessage);
+					DB.addBoardMessage(message);
+				}				
+				receiver.onThreadsFetchComplete();				
+			}
+		})).start();		
+	}
+	
+	public static void getThreadMessages(final String board, final IThreadReceiver receiver){
+		(new Thread(new Runnable() {			
+			@Override
+			public void run() {
+				IAIBParser parser = Application.getParser();
+				String url = parser.getBoardUrl(board);
+				String content;
+				try{					
+					content = get(url);
+					if(content == null || content.length() == 0)
+						throw new Exception(url + ": unavailable.");
+				}catch(Exception e){
+					Logger.w("" + e);
+					return;
+				}				
+				String[] raws = parser.getBoardThreads(content);				
+								
+				for(String raw : raws){
+					String rawHeadMessage = parser.getBoardThreadHeadMessage(raw);
+					ChMessage message = new ChMessage(parser.getId(rawHeadMessage));
+					message.text = Html.fromHtml(parser.getText(rawHeadMessage)).toString();
+					message.image = parser.getImage(rawHeadMessage);
 					DB.addBoardMessage(message);
 				}				
 				receiver.onThreadsFetchComplete();				

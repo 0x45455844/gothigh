@@ -11,7 +11,11 @@ public class DB extends SQLiteOpenHelper{
 	
 	public static final int BOARD_COLUMN_INDEX_ID = 2;
 	public static final int BOARD_COLUMN_INDEX_TEXT = 3;
-	public static final int BOARD_COLUMN_INDEX_IMAGE = 4;
+	public static final int BOARD_COLUMN_INDEX_DATE = 4;
+	public static final int BOARD_COLUMN_INDEX_IMAGE = 5;
+	public static final int BOARD_COLUMN_INDEX_SUBJECT = 6;
+	public static final int BOARD_COLUMN_INDEX_OMMIT = 7;
+	public static final int BOARD_COLUMN_INDEX_OMMIT_IMG = 8;
 	
 	private static final String DB_NAME = "gethigh4chan";
 	private static DB self;
@@ -23,18 +27,57 @@ public class DB extends SQLiteOpenHelper{
 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-		db.execSQL("CREATE TABLE board (_id INTEGER primary key autoincrement, moment INTEGER, id TEXT, text TEXT, image TEXT);");		
+		StringBuffer sb = new StringBuffer();
+		sb.append("CREATE TABLE board (");
+		sb.append("_id INTEGER primary key autoincrement,");
+		sb.append(" moment INTEGER,");
+		sb.append(" id TEXT,");
+		sb.append(" text TEXT,");
+		sb.append(" image TEXT,");
+		sb.append(" date TEXT,");
+		sb.append(" subject TEXT,");
+		sb.append(" ommit INTEGER,");
+		sb.append(" ommiti INTEGER");
+		sb.append(");");
+		db.execSQL(sb.toString());
+		
+		sb = new StringBuffer();
+		sb.append("CREATE TABLE pool (");
+		sb.append("_id INTEGER primary key autoincrement,");
+		sb.append(" moment INTEGER,");
+		sb.append(" id TEXT,");
+		sb.append(" parentid TEXT,");
+		sb.append(" text TEXT,");
+		sb.append(" image TEXT,");
+		sb.append(" date TEXT");
+		sb.append(" subject TEXT,");
+		sb.append(" ommit INTEGER,");
+		sb.append(" ommiti INTEGER");
+		sb.append(");");
+		db.execSQL(sb.toString());	
 	}
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		db.execSQL("DROP TABLE board;");
+		db.execSQL("DROP TABLE pool;");
 		onCreate(db);
 	}
 	
 	public static Cursor getBoard(){
 		SQLiteDatabase db = getSelf().getReadableDatabase();
-		Cursor c = db.rawQuery("SELECT _id, moment, id, text, image FROM board ORDER BY moment DESC", null);
+		StringBuffer sb = new StringBuffer();
+		sb.append("SELECT _id,");
+		sb.append(" moment,");
+		sb.append(" id,");
+		sb.append(" text,");
+		sb.append(" date,");
+		sb.append(" image,");
+		sb.append(" subject,");
+		sb.append(" ommit,");
+		sb.append(" ommiti");
+		sb.append(" FROM board ORDER BY moment DESC");
+		Cursor c = db.rawQuery(sb.toString(), null);
 		return c;
 	}
 	
@@ -50,17 +93,21 @@ public class DB extends SQLiteOpenHelper{
 	}
 	
 	public static void clearBoard(){
-		SQLiteDatabase db = getSelf().getWritableDatabase();			    
-		db.delete("board", null, null);
+		SQLiteDatabase db = getSelf().getWritableDatabase();	
+		db.execSQL("DELETE FROM board;");
 	}
 	
 	public static void addBoardMessage(ChMessage message){
 		SQLiteDatabase db = getSelf().getWritableDatabase();
 		ContentValues values = new ContentValues();		
 		values.put("moment", System.currentTimeMillis());
-		values.put("id", message.getId());
-		values.put("text", message.getText());
-		values.put("image", message.getImage());	    	
+		values.put("id", message.id);
+		values.put("text", message.text);
+		values.put("date", message.date);
+		values.put("image", message.image);
+		values.put("subject", message.subject);
+		values.put("ommit", message.ommit);
+		values.put("ommiti", message.ommitImg);		
 		db.insert("board", null, values);
 	}
 

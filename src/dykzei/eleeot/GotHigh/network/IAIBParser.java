@@ -15,4 +15,7 @@ public interface IAIBParser {
 	String getId(String raw);
 	String getText(String raw);
 	String getImage(String raw);
+	String getDate(String raw);
+	int getOmmited(String raw, boolean withImage);
+	String getSubject(String raw);
 }

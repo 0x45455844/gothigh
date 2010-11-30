@@ -79,7 +79,7 @@ public class Parser4chan implements IAIBParser {
 		if(index >= 0 && index < boards.length)
 			return boards[index];
 		
-		return "b";
+		return boards[0];
 	}
 
 	@Override
@@ -87,7 +87,7 @@ public class Parser4chan implements IAIBParser {
 		if(index >= 0 && index < boardNames.length)
 			return boardNames[index];
 		
-		return "Random";
+		return boardNames[0];
 	}
 	
 	@Override
@@ -103,25 +103,32 @@ public class Parser4chan implements IAIBParser {
 		pattern = Pattern.compile(RCStart + ".*" + RCEnd, Pattern.DOTALL);		
 		matcher = pattern.matcher(raw);
 		
-		if(matcher.find()){
-			String inter = matcher.group();
-			String cancer = inter.substring(RCStart.length(), inter.length() - RCEnd.length());
+		if(!matcher.find()){
+			RCEnd = "Previous\" accesskey=\"z\"></td></form><td>\\[";
 			
-			pattern = Pattern.compile(".*?<hr", Pattern.DOTALL);
-			matcher = pattern.matcher(cancer);
+			pattern = Pattern.compile(RCStart + ".*" + RCEnd, Pattern.DOTALL);		
+			matcher = pattern.matcher(raw);
 			
-			List<String> list = new ArrayList<String>();
-			
-			while(matcher.find()){
-				list.add(matcher.group());
+			if(!matcher.find()){
+				return new String[]{""};
 			}
-			
-			list.remove(list.size() - 1);
-			
-			return list.toArray(new String[list.size()]);
 		}
 		
-		return new String[]{};
+		String inter = matcher.group();
+		String cancer = inter.substring(RCStart.length(), inter.length() - RCEnd.length());
+		
+		pattern = Pattern.compile(".*?<hr", Pattern.DOTALL);
+		matcher = pattern.matcher(cancer);
+		
+		List<String> list = new ArrayList<String>();
+		
+		while(matcher.find()){
+			list.add(matcher.group());
+		}
+		
+		list.remove(list.size() - 1);
+		
+		return list.toArray(new String[list.size()]);
 	}
 
 	@Override
@@ -157,6 +164,37 @@ public class Parser4chan implements IAIBParser {
 	@Override
 	public String getImage(String raw) {
 		return getInner(raw, "<img src=", " border=0 ali", ".*?");
+	}
+	
+	@Override
+	public String getDate(String raw) {
+		String value = getInner(raw, "/span> ", " <span id=\"no", ".*?");
+		while(value.indexOf("span") > 0){
+			value = getInner(value, "</span> ", "", ".*");
+		}
+		
+		return value;
+	}
+	
+	@Override
+	public int getOmmited(String raw, boolean withImage) {
+		String om_area = getInner(raw, "omittedposts\">", "</span", ".*?");		
+		try{
+			return Integer.parseInt(withImage 
+					? getInner(om_area, "sts and ", " image repl", ".*?")
+					: getInner(om_area, "", " posts ", ".*?"));
+		}catch(Exception e){
+			return 0;
+		}
+	}
+	
+	@Override
+	public String getSubject(String raw) {
+		String subj = getInner(raw, "<span class=\"filetitle\">", "</span>", ".*?");
+		if(subj.length() == 0)
+			subj = getInner(raw, "<span class=\"replytitle\">", "</span>", ".*?");
+		
+		return subj;
 	}
 
 }

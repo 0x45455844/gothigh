@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.os.Bundle;
 
 public class PoolActivity extends Activity {
-
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

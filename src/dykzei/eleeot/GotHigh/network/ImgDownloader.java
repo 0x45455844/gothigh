@@ -112,14 +112,13 @@ public class ImgDownloader implements Runnable{
 		return self;
 	}
     
-	public static void scheduleCacheDownload(String url, IDownloadDone idd){
-		String filename = Application.getCacheImgPath(filenameFromUrl(url));
-		Bitmap bmp = BitmapFactory.decodeFile(filename);
-		
-		if(bmp != null){
-			idd.downloadDone(bmp);
-		}else{
-			getSelf().scheduleCacheDownloadInt(url, idd);
+	public static void scheduleCacheDownload(String remote, IDownloadDone idd){
+		getSelf().scheduleCacheDownloadInt(remote, idd);
+	}
+	
+	private void scheduleCacheDownloadInt(String url, IDownloadDone idd){
+		synchronized (queue) {
+			queue.addFirst(new Ant(idd, url));
 		}		
 	}
 	
@@ -158,22 +157,10 @@ public class ImgDownloader implements Runnable{
 			size = dir.length();
 		} else {
 			File[] subFiles = dir.listFiles();
-
-			for (File file : subFiles) {
-				if (file.isFile()) {
-					size += file.length();
-				} else {
-					size += getDirSize(file);
-				}
-			}
+			for (File file : subFiles)
+				size += getDirSize(file);
 		}
 		return size;
-	}
-	
-	private void scheduleCacheDownloadInt(String url, IDownloadDone idd){
-		synchronized (queue) {			
-			queue.addFirst(new Ant(idd, url));
-		}
 	}
 	
 	public void kill(){

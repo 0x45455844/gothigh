@@ -4,37 +4,105 @@
   android:layout_width="fill_parent"
   android:layout_height="wrap_content"
   android:orientation="vertical">  
+  
     <LinearLayout
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 		android:orientation="horizontal"
-		android:background="#221"
-		android:padding="5dip"
-		android:id="@+id/head" >		
+		android:background="#462"
+		android:id="@+id/heada" >
 		<TextView
 			android:id="@+id/id"
 			android:singleLine="true"	  
 			android:layout_width="wrap_content"
 	  		android:layout_height="wrap_content"
 			android:textAppearance="@style/Id"
-		  	android:text="#0123456789"	/>
+		  	android:text="#0123456789"
+		  	android:ellipsize="end" />
+		<TextView
+			android:layout_width="0dip"
+			android:layout_weight="1"
+	  		android:layout_height="wrap_content"
+		  	android:text="" />
+		<TextView
+			android:id="@+id/date"
+			android:singleLine="true"	  
+			android:layout_width="wrap_content"
+	  		android:layout_height="wrap_content"
+			android:textAppearance="@style/Text"
+		  	android:text="00/00/00(Mon)00:00:00"
+		  	android:paddingRight="8dip"	/>
 	</LinearLayout>
+
 	<LinearLayout
 		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:orientation="horizontal"
-		android:padding="5dip"
-		android:id="@+id/heada" >
-		<ImageView
-	  		android:id="@+id/image"
-	  		android:layout_width="wrap_content"
-	  		android:layout_height="wrap_content" />  		
-  		<TextView
-	  		android:id="@+id/text"
-	  		android:text="text"
-	  		android:textAppearance="@style/Text"
+	  	android:layout_height="wrap_content"
+	  	android:orientation="horizontal"
+	  	android:background="#462"
+	  	android:id="@+id/headb" >
+		<TextView
+			android:layout_width="0dip"
+			android:layout_weight="1"
+	  		android:layout_height="wrap_content"
+		  	android:text="" />
+		<TextView
+			android:id="@+id/ommit"
+			android:singleLine="true"	  
 			android:layout_width="wrap_content"
-	  		android:layout_height="wrap_content" />
-	</LinearLayout> 	
+	  		android:layout_height="wrap_content"
+			android:textAppearance="@style/Text"
+		  	android:text="10 / 4i"
+		  	android:paddingRight="8dip" />
+	</LinearLayout>	
+	
+	<LinearLayout
+		android:layout_width="fill_parent"
+	  	android:layout_height="wrap_content"
+	  	android:orientation="horizontal"
+	  	android:background="#462"
+	  	android:id="@+id/headc">
+		<TextView
+			android:id="@+id/subject"
+			android:singleLine="false"	  
+			android:layout_width="wrap_content"
+	  		android:layout_height="wrap_content"
+			android:textAppearance="@style/Text"
+		  	android:text="Anonymous: subject" />
+
+	</LinearLayout>	
+	
+	<LinearLayout
+		android:layout_width="fill_parent"
+	  	android:layout_height="wrap_content"
+	  	android:orientation="vertical"
+	  	android:id="@+id/body">  	
+	
+		<TextView
+			android:id="@+id/imgProp"
+			android:layout_width="wrap_content"
+	  		android:layout_height="wrap_content"
+			android:textAppearance="@style/Text"
+		  	android:text="10kb/300x300/jpg"
+		  	android:paddingTop="10dip"
+		  	android:visibility="gone"
+		  	android:layout_gravity="center_horizontal"
+		  	android:gravity="center_horizontal" />
+		  	
+		<ImageView 
+			android:id="@+id/image"
+			android:layout_width="wrap_content"
+		  	android:layout_height="wrap_content"
+		  	android:layout_gravity="center"
+		  	android:gravity="center"
+		  	android:scaleType="fitCenter"
+		  	android:adjustViewBounds="true" />
+	  	
+		<TextView
+			android:id="@+id/text"	
+			android:layout_width="fill_parent"
+	  		android:layout_height="fill_parent"			  		 	
+		  	android:textAppearance="@style/Text" />
+
+	</LinearLayout>
   	
 </dykzei.eleeot.GotHigh.gui.BoardItem>
