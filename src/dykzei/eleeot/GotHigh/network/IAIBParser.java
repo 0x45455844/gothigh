@@ -17,5 +17,8 @@ public interface IAIBParser {
 	String getImage(String raw);
 	String getDate(String raw);
 	int getOmmited(String raw, boolean withImage);
+	int getChildCount(String raw, boolean images);
 	String getSubject(String raw);
+	String getMessageUrl(String board, String id);
+	String[] getThreadMessages(String raw);
 }

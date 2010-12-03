@@ -17,6 +17,14 @@ public class DB extends SQLiteOpenHelper{
 	public static final int BOARD_COLUMN_INDEX_OMMIT = 7;
 	public static final int BOARD_COLUMN_INDEX_OMMIT_IMG = 8;
 	
+	public static final int POOL_COLUMN_INDEX_ID = 2;
+	public static final int POOL_COLUMN_INDEX_PARENTID = 3;
+	public static final int POOL_COLUMN_INDEX_TEXT = 4;
+	public static final int POOL_COLUMN_INDEX_DATE = 5;
+	public static final int POOL_COLUMN_INDEX_IMAGE = 6;
+	public static final int POOL_COLUMN_INDEX_SUBJECT = 7;
+	public static final int POOL_COLUMN_INDEX_BOARD = 8;
+	
 	private static final String DB_NAME = "gethigh4chan";
 	private static DB self;
 
@@ -49,14 +57,13 @@ public class DB extends SQLiteOpenHelper{
 		sb.append(" parentid TEXT,");
 		sb.append(" text TEXT,");
 		sb.append(" image TEXT,");
-		sb.append(" date TEXT");
+		sb.append(" date TEXT,");
 		sb.append(" subject TEXT,");
-		sb.append(" ommit INTEGER,");
-		sb.append(" ommiti INTEGER");
+		sb.append(" board TEXT");
 		sb.append(");");
 		db.execSQL(sb.toString());	
 	}
-
+	
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		db.execSQL("DROP TABLE board;");
@@ -76,7 +83,44 @@ public class DB extends SQLiteOpenHelper{
 		sb.append(" subject,");
 		sb.append(" ommit,");
 		sb.append(" ommiti");
-		sb.append(" FROM board ORDER BY moment DESC");
+		sb.append(" FROM board ORDER BY moment ASC");
+		Cursor c = db.rawQuery(sb.toString(), null);
+		return c;
+	}
+	
+	public static Cursor getThread(String id){
+		SQLiteDatabase db = getSelf().getReadableDatabase();
+		StringBuffer sb = new StringBuffer();
+		sb.append("SELECT _id,");
+		sb.append(" moment,");
+		sb.append(" id,");
+		sb.append(" parentid,");
+		sb.append(" text,");
+		sb.append(" date,");
+		sb.append(" image,");
+		sb.append(" subject,");
+		sb.append(" board");
+		sb.append(" FROM pool");
+		sb.append(" WHERE parentid=\"");
+		sb.append(id);		
+		sb.append("\" ORDER BY moment ASC");
+		Cursor c = db.rawQuery(sb.toString(), null);
+		return c;
+	}
+	
+	public static Cursor getPool(){
+		SQLiteDatabase db = getSelf().getReadableDatabase();
+		StringBuffer sb = new StringBuffer();
+		sb.append("SELECT _id,");
+		sb.append(" moment,");
+		sb.append(" id,");
+		sb.append(" parentid,");
+		sb.append(" text,");
+		sb.append(" date,");
+		sb.append(" image,");
+		sb.append(" subject,");
+		sb.append(" board");
+		sb.append(" FROM pool WHERE parentid=id ORDER BY moment DESC");
 		Cursor c = db.rawQuery(sb.toString(), null);
 		return c;
 	}
@@ -94,7 +138,13 @@ public class DB extends SQLiteOpenHelper{
 	
 	public static void clearBoard(){
 		SQLiteDatabase db = getSelf().getWritableDatabase();	
-		db.execSQL("DELETE FROM board;");
+		db.execSQL("DELETE FROM board");
+	}
+	
+	public static void shrinkPool(){
+		SQLiteDatabase db = getSelf().getWritableDatabase();	
+		// TODO: refer to setting
+		db.execSQL("DELETE FROM pool WHERE moment < " + (System.currentTimeMillis() - 86400000));
 	}
 	
 	public static void addBoardMessage(ChMessage message){
@@ -109,6 +159,27 @@ public class DB extends SQLiteOpenHelper{
 		values.put("ommit", message.ommit);
 		values.put("ommiti", message.ommitImg);		
 		db.insert("board", null, values);
+	}
+	
+	public static void addPoolMessage(ChMessage message){
+		SQLiteDatabase db = getSelf().getWritableDatabase();
+		
+		Cursor c = db.rawQuery("SELECT id FROM pool WHERE id=" + message.id, null);
+		int count = c.getCount();
+		c.close();
+		if(count > 0)
+			return;
+		
+		ContentValues values = new ContentValues();		
+		values.put("moment", System.currentTimeMillis());
+		values.put("id", message.id);
+		values.put("parentid", message.parentId);
+		values.put("text", message.text);
+		values.put("date", message.date);
+		values.put("image", message.image);
+		values.put("subject", message.subject);
+		values.put("board", message.board);
+		db.insert("pool", null, values);
 	}
 
 }

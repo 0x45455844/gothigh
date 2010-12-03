@@ -8,6 +8,8 @@ public class ChMessage {
 	public String parentId = "";
 	public String date = "";
 	public String subject = "";
+	public String name = "";
+	public String board = "";
 	public int ommit;
 	public int ommitImg;
 	

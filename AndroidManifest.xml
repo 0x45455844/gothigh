@@ -24,6 +24,7 @@
         </activity>
         
         <activity android:name="dykzei.eleeot.GotHigh.gui.PoolActivity" />
+        <activity android:name="dykzei.eleeot.GotHigh.gui.ThreadActivity" />
 
     </application>
     

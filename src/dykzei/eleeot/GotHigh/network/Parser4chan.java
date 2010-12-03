@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
 public class Parser4chan implements IAIBParser {
 	private static Pattern pattern;
 	private static Matcher matcher;
@@ -171,8 +170,7 @@ public class Parser4chan implements IAIBParser {
 		String value = getInner(raw, "/span> ", " <span id=\"no", ".*?");
 		while(value.indexOf("span") > 0){
 			value = getInner(value, "</span> ", "", ".*");
-		}
-		
+		}		
 		return value;
 	}
 	
@@ -192,9 +190,68 @@ public class Parser4chan implements IAIBParser {
 	public String getSubject(String raw) {
 		String subj = getInner(raw, "<span class=\"filetitle\">", "</span>", ".*?");
 		if(subj.length() == 0)
-			subj = getInner(raw, "<span class=\"replytitle\">", "</span>", ".*?");
-		
+			subj = getInner(raw, "<span class=\"replytitle\">", "</span>", ".*?");		
 		return subj;
+	}
+	
+	@Override
+	public int getChildCount(String raw, boolean images){
+		if(images){
+			return 0; // TODO: help to know it?
+		}else{
+			pattern = Pattern.compile("<table><tr.*?/tr></table>");
+			Matcher matcher = pattern.matcher(raw);
+			int count = 0;
+			while(matcher.find()){
+				count++;
+			}
+			return count;
+		}
+	}
+	
+	@Override
+	public String getMessageUrl(String board, String id) {
+		String url = getHostUrl() + "/" + board + "/res/" + id;		
+		return url;
+	}
+	
+	public String[] getThreadMessages(String raw){
+		String RCStart = "<span class=\"filesize\">";
+		String RCEnd = "<hr>";
+		
+		pattern = Pattern.compile(RCStart + ".*?" + RCEnd, Pattern.DOTALL);		
+		matcher = pattern.matcher(raw);
+		
+		String rawThread = null;		
+		if(matcher.find()){
+			rawThread = matcher.group();
+		}
+		
+		pattern = Pattern.compile(".*?<table");
+		matcher = pattern.matcher(rawThread);
+		
+		String first = null;
+		if(matcher.find()){
+			first = matcher.group();
+		}else{
+			pattern = Pattern.compile(".*?<\\/blockquote>");
+			matcher = pattern.matcher(rawThread);
+			if(matcher.find()){
+				first = matcher.group();
+			}
+		}
+		
+		pattern = Pattern.compile("<table><tr.*?/tr></table>");
+		matcher = pattern.matcher(rawThread);
+		
+		List<String> list = new ArrayList<String>();
+		list.add(first);
+		
+		while(matcher.find()){
+			list.add(matcher.group());
+		}
+		
+		return list.toArray(new String[list.size()]);
 	}
 
 }

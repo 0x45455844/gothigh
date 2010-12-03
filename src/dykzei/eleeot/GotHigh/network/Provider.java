@@ -27,7 +27,7 @@ public class Provider {
 						throw new Exception(url + ": unavailable.");
 				}catch(Exception e){
 					Logger.w("" + e);
-					receiver.onThreadsFetchComplete();
+					receiver.onComplete();
 					return;
 				}				
 				String[] raws = parser.getBoardThreads(content);				
@@ -39,21 +39,23 @@ public class Provider {
 					message.image = parser.getImage(rawHeadMessage);
 					message.date = parser.getDate(rawHeadMessage);
 					message.ommit = parser.getOmmited(rawHeadMessage, false);
+					message.ommit += parser.getChildCount(raw, false);
 					message.ommitImg = parser.getOmmited(rawHeadMessage, true);
+					message.ommitImg += parser.getChildCount(raw, true);
 					message.subject = parser.getSubject(rawHeadMessage);
 					DB.addBoardMessage(message);
 				}				
-				receiver.onThreadsFetchComplete();				
+				receiver.onComplete();				
 			}
 		})).start();		
 	}
 	
-	public static void getThreadMessages(final String board, final IThreadReceiver receiver){
+	public static void getThreadMessages(final String board, final String id, final IThreadReceiver receiver){
 		(new Thread(new Runnable() {			
 			@Override
 			public void run() {
 				IAIBParser parser = Application.getParser();
-				String url = parser.getBoardUrl(board);
+				String url = parser.getMessageUrl(board, id);
 				String content;
 				try{					
 					content = get(url);
@@ -61,18 +63,22 @@ public class Provider {
 						throw new Exception(url + ": unavailable.");
 				}catch(Exception e){
 					Logger.w("" + e);
+					receiver.onComplete();
 					return;
 				}				
-				String[] raws = parser.getBoardThreads(content);				
+				String[] raws = parser.getThreadMessages(content);				
 								
 				for(String raw : raws){
-					String rawHeadMessage = parser.getBoardThreadHeadMessage(raw);
-					ChMessage message = new ChMessage(parser.getId(rawHeadMessage));
-					message.text = Html.fromHtml(parser.getText(rawHeadMessage)).toString();
-					message.image = parser.getImage(rawHeadMessage);
-					DB.addBoardMessage(message);
+					ChMessage message = new ChMessage(parser.getId(raw));
+					message.parentId = id;
+					message.text = Html.fromHtml(parser.getText(raw)).toString();
+					message.image = parser.getImage(raw);
+					message.date = parser.getDate(raw);
+					message.subject = parser.getSubject(raw);
+					message.board = board;
+					DB.addPoolMessage(message);
 				}				
-				receiver.onThreadsFetchComplete();				
+				receiver.onComplete();				
 			}
 		})).start();		
 	}

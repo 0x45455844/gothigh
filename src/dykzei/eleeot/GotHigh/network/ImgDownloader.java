@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -135,8 +137,23 @@ public class ImgDownloader implements Runnable{
 					long cacheSize = getDirSize(cr);
 					if(cacheSize > Settings.maxCache){
 						File[] subFiles = cr.listFiles();
+
+						Arrays.sort(subFiles, new Comparator<File>() {
+
+							public int compare(final File o1, final File o2) {
+								long l1 = o1.lastModified();
+								long l2 = o2.lastModified();
+								if(l1>l2)
+									return 1;
+								if(l1<l2)
+									return -1;
+								return 0;
+						    }
+						});
+						
 						long diff = cacheSize - Settings.maxCache,
 							 correction = 0;
+						
 						for(File sf : subFiles){
 							correction += sf.length();
 							sf.delete();
