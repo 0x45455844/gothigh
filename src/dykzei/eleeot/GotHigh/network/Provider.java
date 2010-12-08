@@ -2,6 +2,7 @@ package dykzei.eleeot.GotHigh.network;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.lang.ref.WeakReference;
 import java.net.URL;
 import java.net.URLConnection;
 
@@ -14,7 +15,7 @@ import dykzei.eleeot.GotHigh.chan.ChMessage;
 
 public class Provider {
 	
-	public static void getBoardThreads(final String board, final IThreadReceiver receiver){
+	public static void getBoardThreads(final String board, final WeakReference<IThreadReceiver> receiver){
 		(new Thread(new Runnable() {			
 			@Override
 			public void run() {
@@ -27,7 +28,9 @@ public class Provider {
 						throw new Exception(url + ": unavailable.");
 				}catch(Exception e){
 					Logger.w("" + e);
-					receiver.onComplete();
+					if(receiver.get() != null){
+						receiver.get().onComplete();
+					}
 					return;
 				}				
 				String[] raws = parser.getBoardThreads(content);				
@@ -37,15 +40,22 @@ public class Provider {
 					ChMessage message = new ChMessage(parser.getId(rawHeadMessage));
 					message.text = Html.fromHtml(parser.getText(rawHeadMessage)).toString();
 					message.image = parser.getImage(rawHeadMessage);
+					message.fullImage = parser.getFullImage(rawHeadMessage);
+					message.fullImageInfo = parser.getFullImageInfo(rawHeadMessage);
 					message.date = parser.getDate(rawHeadMessage);
 					message.ommit = parser.getOmmited(rawHeadMessage, false);
 					message.ommit += parser.getChildCount(raw, false);
 					message.ommitImg = parser.getOmmited(rawHeadMessage, true);
 					message.ommitImg += parser.getChildCount(raw, true);
 					message.subject = parser.getSubject(rawHeadMessage);
+					if(receiver.get() == null ){
+						break;
+					}
 					DB.addBoardMessage(message);
 				}				
-				receiver.onComplete();				
+				if(receiver.get() != null){
+					receiver.get().onComplete();
+				}		
 			}
 		})).start();		
 	}
@@ -73,6 +83,8 @@ public class Provider {
 					message.parentId = id;
 					message.text = Html.fromHtml(parser.getText(raw)).toString();
 					message.image = parser.getImage(raw);
+					message.fullImage = parser.getFullImage(raw);
+					message.fullImageInfo = parser.getFullImageInfo(raw);
 					message.date = parser.getDate(raw);
 					message.subject = parser.getSubject(raw);
 					message.board = board;
@@ -89,6 +101,7 @@ public class Provider {
         try {
             URL url = new URL(sUrl);
             URLConnection con = url.openConnection();
+            con.setConnectTimeout(20000);
             
             BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
             while ((str = in.readLine()) != null) {

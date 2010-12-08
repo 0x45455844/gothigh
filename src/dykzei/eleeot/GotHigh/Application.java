@@ -63,6 +63,10 @@ public class Application extends android.app.Application {
 		return getRootPath() + ".cache/" + cachedImageExt(fname);
 	}
 	
+	public static String getHirezImgPath(String fname){
+		return getRootPath() + cachedImageExt(fname);
+	}
+	
 	private static void prepareSD(){
 		File f = new File(getRootPath(), "");
 		if(!f.exists())

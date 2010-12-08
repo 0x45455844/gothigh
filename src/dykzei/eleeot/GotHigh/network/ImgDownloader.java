@@ -15,21 +15,20 @@ import dykzei.eleeot.GotHigh.Application;
 import dykzei.eleeot.GotHigh.Logger;
 import dykzei.eleeot.GotHigh.Settings;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-
 public class ImgDownloader implements Runnable{
 	
 	class Ant implements Runnable{
 
 		private IDownloadDone downloadDone;
 		private String url;
+		private String path;
 		private Thread currentThread;
 		private boolean alive;
 		
-		public Ant(IDownloadDone idd, String url){
+		public Ant(IDownloadDone idd, String url, String path){
 			this.downloadDone = idd;
 			this.url = url;
+			this.path = path;
 		}
 		
 		@Override
@@ -37,43 +36,7 @@ public class ImgDownloader implements Runnable{
 			alive = true;
 			currentThread = Thread.currentThread();
 			currentThread.setPriority(3);
-			try {
-				URL oUrl = new URL(url);
-				
-				InputStream is = null;
-				try{
-					is = oUrl.openStream();
-				}catch(IOException e){
-					is = null;
-				}
-				String filename = filenameFromUrl(url);
-				
-				if(is != null && filename != null){
-					try {
-						File f = new File(Application.getCacheImgPath(filename));
-						FileOutputStream fos = new FileOutputStream(f, false);
-						byte[] buff = new byte[1024];
-						do{
-							int count = is.read(buff);
-							if(count > 0){
-								fos.write(buff, 0, count);
-								fos.flush();
-							}else{
-								break;
-							}
-						}while(true);
-					    
-					    fos.close();
-				    } catch (Exception e) {
-				    	Logger.w(e.toString());
-					}
-					is.close();
-					Bitmap bmp = BitmapFactory.decodeFile(Application.getCacheImgPath(filename));
-					downloadDone.downloadDone(bmp);
-				}						
-			} catch (Exception e) {
-				Logger.w(e.toString());
-			}
+			downloadDone.downloadDone(downloadFile(url, path));
 			alive = false;
 		}
 		
@@ -115,12 +78,28 @@ public class ImgDownloader implements Runnable{
 	}
     
 	public static void scheduleCacheDownload(String remote, IDownloadDone idd){
-		getSelf().scheduleCacheDownloadInt(remote, idd);
+		if(remote != null && !remote.equals(""))
+			getSelf().scheduleCacheDownloadInt(remote, idd);
 	}
 	
 	private void scheduleCacheDownloadInt(String url, IDownloadDone idd){
 		synchronized (queue) {
-			queue.addFirst(new Ant(idd, url));
+			String filename = filenameFromUrl(url);
+			String path = Application.getCacheImgPath(filename);
+			queue.addFirst(new Ant(idd, url, path));
+		}		
+	}
+	
+	public static void scheduleHirezDownload(String remote, IDownloadDone idd){
+		if(remote != null && !remote.equals(""))
+			getSelf().scheduleHirezDownloadInt(remote, idd);
+	}
+	
+	private void scheduleHirezDownloadInt(String url, IDownloadDone idd){
+		synchronized (queue) {
+			String filename = filenameFromUrl(url);
+			String path = Application.getHirezImgPath(filename);
+			queue.addFirst(new Ant(idd, url, path));
 		}		
 	}
 	
@@ -215,10 +194,10 @@ public class ImgDownloader implements Runnable{
 					}					
 				}
 				
-				Thread.sleep(256);
+				Thread.sleep(512);
 				
 				if(threads.isEmpty()){
-					idleTime += 256;
+					idleTime += 512;
 				}else{
 					idleTime = 0;
 				}
@@ -238,5 +217,48 @@ public class ImgDownloader implements Runnable{
 				return url.substring(p + 1);
 		}
 		return url;
+	}
+	
+	public static boolean downloadFile(String url, String path){
+		Thread.currentThread().setPriority(3);
+		try {
+			URL oUrl = new URL(url);
+			
+			InputStream is = null;
+			try{
+				is = oUrl.openStream();
+			}catch(IOException e){
+				is = null;
+			}			
+			
+			if(is != null && path != null){
+				try {
+					File f = new File(path);
+					FileOutputStream fos = new FileOutputStream(f, false);
+					byte[] buff = new byte[1024];
+					do{
+						int count = is.read(buff);
+						if(count > 0){
+							fos.write(buff, 0, count);
+							fos.flush();
+						}else{
+							break;
+						}
+					}while(true);
+				    
+				    fos.close();
+			    } catch (Exception e) {
+			    	Logger.w(e.toString());
+			    	is.close();
+			    	return false;
+				}
+				is.close();
+			}						
+		} catch (Exception e) {
+			Logger.w(e.toString());
+			return false;
+		}
+		
+		return true;
 	}
 }

@@ -5,6 +5,7 @@ import java.io.File;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -25,7 +26,7 @@ public abstract class MessageHolder {
 	protected LinearLayout body;
 	protected MessageItem root;
 	
-	public MessageHolder(MessageItem parent){
+	public MessageHolder(View parent){
 		id = (TextView)parent.findViewById(R.id.id);
 		text = (TextView)parent.findViewById(R.id.text);
 		image = (ImageView)parent.findViewById(R.id.image);
@@ -46,18 +47,18 @@ public abstract class MessageHolder {
 	}
 	
 	protected void preloadImage(String local, String remote, IDownloadDone idd){
-		if(remote.equals("")){
-			image.setImageBitmap(null);
-			return;
+		if((new File(local)).exists()){
+			Bitmap bmp = BitmapFactory.decodeFile(local);
+			if(bmp != null){
+				image.setImageBitmap(bmp);
+				return;
+			}
 		}
 		
-		if(!(new File(local)).exists()){
-			image.setImageBitmap(null);
+		if(idd != null)
 			ImgDownloader.scheduleCacheDownload(remote, idd);
-		}else{
-			Bitmap bmp = BitmapFactory.decodeFile(local);
-			if(bmp != null)
-				image.setImageBitmap(bmp);
-		}
+
+		image.setOnClickListener(null);
+		image.setImageBitmap(null);
 	}
 }

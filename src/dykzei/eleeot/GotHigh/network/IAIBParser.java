@@ -21,4 +21,6 @@ public interface IAIBParser {
 	String getSubject(String raw);
 	String getMessageUrl(String board, String id);
 	String[] getThreadMessages(String raw);
+	String getFullImage(String raw);
+	String getFullImageInfo(String raw);
 }

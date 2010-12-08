@@ -30,35 +30,41 @@ public final class R {
     }
     public static final class id {
         public static final int boardName=0x7f060004;
-        public static final int boardPage=0x7f060006;
         public static final int body=0x7f06000f;
         public static final int date=0x7f06000c;
-        public static final int grid=0x7f060013;
+        public static final int grid=0x7f060012;
         public static final int head=0x7f06000a;
-        public static final int header=0x7f060000;
+        public static final int header=0x7f060001;
         public static final int id=0x7f06000b;
-        public static final int image=0x7f060011;
+        public static final int image=0x7f060008;
         public static final int imgProp=0x7f060010;
-        public static final int left=0x7f060005;
-        public static final int list=0x7f060008;
+        public static final int left=0x7f060003;
+        public static final int list=0x7f060000;
         public static final int ommit=0x7f06000d;
-        public static final int pool=0x7f060002;
-        public static final int refresh=0x7f060001;
-        public static final int right=0x7f060007;
+        public static final int pool=0x7f060006;
+        public static final int refresh=0x7f060002;
+        public static final int right=0x7f060005;
         public static final int root=0x7f060009;
-        public static final int settings=0x7f060003;
+        public static final int settings=0x7f060007;
         public static final int subject=0x7f06000e;
-        public static final int text=0x7f060012;
+        public static final int text=0x7f060011;
     }
     public static final class layout {
         public static final int board=0x7f030000;
-        public static final int message_item=0x7f030001;
-        public static final int pool=0x7f030002;
+        public static final int expand=0x7f030001;
+        public static final int image=0x7f030002;
+        public static final int message=0x7f030003;
+        public static final int message_item=0x7f030004;
+        public static final int pool=0x7f030005;
+        public static final int pool_item=0x7f030006;
+        public static final int poolmessage=0x7f030007;
     }
     public static final class string {
         public static final int app_name=0x7f040000;
         public static final int board=0x7f040002;
-        public static final int loading=0x7f040004;
+        public static final int expand=0x7f040004;
+        public static final int image=0x7f040005;
+        public static final int loading=0x7f040006;
         public static final int pool=0x7f040001;
         public static final int settings=0x7f040003;
     }

@@ -5,84 +5,83 @@
   android:layout_height="fill_parent"
   android:orientation="vertical">
   
-  <LinearLayout
-  	android:layout_width="fill_parent"
- 	android:layout_height="60dip"
- 	android:padding="5dip"
- 	android:id="@+id/header"
- 	android:background="#530"
-  	android:orientation="horizontal">
-  	
-  	<ImageButton 
-  		android:id="@+id/refresh"
-  		android:layout_width="wrap_content"
-  		android:layout_height="wrap_content"
-  		android:scaleType="fitCenter"
-  		android:background="#0000"
-  		android:adjustViewBounds="true"
-  		android:src="@drawable/icon_refresh" />
-  		
-	<ImageButton 
-  		android:id="@+id/pool"
-  		android:layout_width="wrap_content"
-  		android:layout_height="wrap_content"
-  		android:scaleType="fitCenter"
-  		android:background="#0000"
-  		android:adjustViewBounds="true"
-  		android:src="@drawable/icon_pool" />
-  		
-	<ImageButton 
-  		android:id="@+id/settings"
-  		android:layout_width="wrap_content"
-  		android:layout_height="wrap_content"
-  		android:scaleType="fitCenter"
-  		android:background="#0000"
-  		android:adjustViewBounds="true"
-  		android:src="@drawable/icon_settings" />
-  		
-  	<TextView
-  		android:id="@+id/boardName"
-  		android:layout_width="wrap_content"
-  		android:layout_height="fill_parent"
-  		android:gravity="center"
-  		android:text="b"
-  		android:layout_weight="1"
-  		android:textAppearance="@style/BoardName" />
-  		
-	<ImageButton 
-  		android:id="@+id/left"
-  		android:layout_width="wrap_content"
-  		android:layout_height="wrap_content"
-  		android:scaleType="fitCenter"
-  		android:background="#0000"
-  		android:adjustViewBounds="true"
-  		android:src="@drawable/icon_left" />
-  		
-  	<TextView
-  		android:id="@+id/boardPage"
-  		android:layout_width="wrap_content"
-  		android:layout_height="wrap_content"
-  		android:gravity="center"
-  		android:text="1"
-  		android:textAppearance="@style/BoardName" />
-  		
-	<ImageButton 
-  		android:id="@+id/right"
-  		android:layout_width="wrap_content"
-  		android:layout_height="wrap_content"
-  		android:scaleType="fitCenter"
-  		android:background="#0000"
-  		android:adjustViewBounds="true"
-  		android:paddingRight="7dip"
-  		android:src="@drawable/icon_right" />
-  		
-  </LinearLayout>
+	<ListView
+	  	android:id="@+id/list"
+	  	android:layout_below="@+id/header"
+	  	android:layout_width="fill_parent"
+	  	android:layout_height="fill_parent"
+	  	android:background="#000" />
   
-  <ListView
-  	android:id="@+id/list"
-  	android:layout_below="@+id/header"
-  	android:layout_width="fill_parent"
-  	android:layout_height="fill_parent"
-  	android:background="#000" />
+  	<HorizontalScrollView  	
+	 	android:id="@+id/header"
+	 	android:background="#530"
+  		android:layout_width="fill_parent"
+	 	android:layout_height="wrap_content" >
+	 	
+	  <LinearLayout
+	  	android:layout_width="fill_parent"
+	 	android:layout_height="60dip"
+	 	android:padding="5dip"	 	
+	  	android:orientation="horizontal">
+	  	
+	  	<ImageButton 
+	  		android:id="@+id/refresh"
+	  		android:layout_width="wrap_content"
+	  		android:layout_height="wrap_content"
+	  		android:scaleType="fitCenter"
+	  		android:background="#0000"
+	  		android:adjustViewBounds="true"
+	  		android:layout_marginRight="15dip"
+	  		android:src="@drawable/icon_refresh" />
+	  		
+	  	<ImageButton 
+	  		android:id="@+id/left"
+	  		android:layout_width="wrap_content"
+	  		android:layout_height="wrap_content"
+	  		android:scaleType="fitCenter"
+	  		android:background="#0000"
+	  		android:adjustViewBounds="true"
+	  		android:src="@drawable/icon_left" />
+
+  		<TextView
+	  		android:id="@+id/boardName"
+	  		android:layout_width="wrap_content"
+	  		android:layout_height="fill_parent"
+	  		android:gravity="center"
+	  		android:text="b"
+	  		android:layout_weight="1"
+	  		android:textAppearance="@style/BoardName" /> 
+	  		
+		<ImageButton 
+	  		android:id="@+id/right"
+	  		android:layout_width="wrap_content"
+	  		android:layout_height="wrap_content"
+	  		android:scaleType="fitCenter"
+	  		android:background="#0000"
+	  		android:adjustViewBounds="true"
+	  		android:paddingRight="7dip"
+	  		android:src="@drawable/icon_right" />
+	  		
+		<ImageButton 
+	  		android:id="@+id/pool"
+	  		android:layout_width="wrap_content"
+	  		android:layout_height="wrap_content"
+	  		android:scaleType="fitCenter"
+	  		android:background="#0000"
+	  		android:adjustViewBounds="true"
+	  		android:src="@drawable/icon_pool" />
+	  		
+		<ImageButton 
+	  		android:id="@+id/settings"
+	  		android:layout_width="wrap_content"
+	  		android:layout_height="wrap_content"
+	  		android:scaleType="fitCenter"
+	  		android:background="#0000"
+	  		android:adjustViewBounds="true"
+	  		android:src="@drawable/icon_settings" />
+	  		
+	  </LinearLayout>
+	  
+  </HorizontalScrollView>  
   
 </RelativeLayout>

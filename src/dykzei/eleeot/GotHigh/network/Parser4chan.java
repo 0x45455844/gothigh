@@ -122,7 +122,11 @@ public class Parser4chan implements IAIBParser {
 		List<String> list = new ArrayList<String>();
 		
 		while(matcher.find()){
-			list.add(matcher.group());
+			try{ 
+				list.add(matcher.group()); 
+			}catch(Exception e){
+				e.printStackTrace();
+			}
 		}
 		
 		list.remove(list.size() - 1);
@@ -252,6 +256,24 @@ public class Parser4chan implements IAIBParser {
 		}
 		
 		return list.toArray(new String[list.size()]);
+	}
+	
+	@Override
+	public String getFullImage(String rawCancer) {
+		String value = getInner(rawCancer, "File : <a href=\"", "\" target=\"_blank\">", ".*?");
+		if(value.equals("")){
+			value = getInner(rawCancer, "File<a href=\"", "\" target=\"_blank\">", ".*?");
+		}
+		return value;
+	}
+
+	@Override
+	public String getFullImageInfo(String rawCancer) {
+		String value = getInner(rawCancer, "</a>-\\(", "\\)", ".*?", 1, 1);
+		if(value.indexOf("span") > 0){
+			value = getInner(value, "", ", <span", ".*?");
+		}
+		return value;
 	}
 
 }

@@ -5,6 +5,8 @@ public class ChMessage {
 	public String id = "";
 	public String text = "";
 	public String image = "";
+	public String fullImage = "";
+	public String fullImageInfo = "";
 	public String parentId = "";
 	public String date = "";
 	public String subject = "";
